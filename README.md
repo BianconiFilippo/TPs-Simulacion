@@ -42,3 +42,4 @@ El TP1 es una primera version de la ruleta, si van a aportar modificaciones que 
 <h3>Correr tp</h3>
 <p>Para correr el tp, debemos usar el comando siguiente</p>
 <code>python (nombre_carpeta_tp)/main.py</code>
+<p>(Puede pedir que lo corramos en python3 en lugar de python)</p>
