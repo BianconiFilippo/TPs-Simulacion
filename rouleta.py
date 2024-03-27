@@ -20,26 +20,16 @@ for _ in range(corridas):
   for i in range(cantidad_tiradas):
     valor_actual = random.randint(0,36)
     valores.append(valor_actual)
-
     freq_abs_actual = valores.count(numero_elegido)
     freq_rel_actual= freq_abs_actual/cantidad_tiradas
     freq_rel_historico.append(freq_rel_actual)
-
     promedio=sum(valores)/(i+1)
     promedio_historico.append(promedio)
-
-
-
-
   freq_abs = valores.count(numero_elegido)
   freq_rel= freq_abs/cantidad_tiradas
   freq_rel_historico.append(freq_rel)
-
   promedio = sum(valores)/cantidad_tiradas
   promedio_historico.append(promedio)
-
-
-
   plt.plot(promedio_historico,label="promedio historico")
   plt.title("Promedio historico")
   plt.xlabel("n(nro tiradas)")
