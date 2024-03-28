@@ -26,10 +26,10 @@ El TP1 es una primera version de la ruleta, si van a aportar modificaciones que 
         <p>Abrir el entorno creado</p>
         <br>
         <p style="color:red">Para linux/MACos</p>
-        <code>source tutorial-env/bin/activate</code>
+        <code>source .venv/bin/activate</code>
         <br>
         <p style="color:red">Para Windows</p>
-        <code>tutorial-env\Scripts\activate</code>
+        <code>.venv\Scripts\activate</code>
     </li>
     <li>
         <p>Instalar paquetes necesarios</p>
