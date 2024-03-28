@@ -104,7 +104,7 @@ for j in range(CORRIDAS):
 
   plt.subplot(2, 2, 4)
   plt.plot(varianza_historico,label="varianza historico")
-  plt.title("varainza historico")
+  plt.title("varianza historico")
   plt.xlabel("n(nro tiradas)")
   plt.ylabel("vv(valor de la varianza)")
   plt.axhline(y=VARIANZA_ESPERADA, color='r', linestyle='-.')
