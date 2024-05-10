@@ -10,12 +10,11 @@ class Estrategia:
     unidad_dalambert: int
 
     #Apostar es un metodo que se asigna al saber que estrategia se va a usar(en el metodo init)
-    get_proxima_apuesta: Callable[[bool,int], int]
+    get_proxima_apuesta: Callable[[bool, int], int]
 
     #Atributos privados
     __apuestas_pasadas_fibonacci: List[int]
-    __cantidad_victorias_paroli:int
-
+    __cantidad_victorias_paroli: int
 
     def __init__(self, apuesta_inicial: int, estrategia: str, unidad_dalambert: int = 0):
         if not isinstance(apuesta_inicial, int):
@@ -41,7 +40,6 @@ class Estrategia:
         elif estrategia == 'paroli':
             self.get_proxima_apuesta = self.__paroli
 
-
         self.__apuestas_pasadas_fibonacci = [0, 0, 0]
         print(f"ESTRATEGIA: estas usando '{estrategia}'")
 
@@ -52,8 +50,7 @@ class Estrategia:
             proxima_apuesta = self.monto_apuesta_inicial
         return proxima_apuesta
 
-
-    def __fibonacci(self, gano_apuesta:bool, cantidad_apostada: int) -> int:
+    def __fibonacci(self, gano_apuesta: bool, cantidad_apostada: int) -> int:
         self.__apuestas_pasadas_fibonacci[2] = self.__apuestas_pasadas_fibonacci[1]
         self.__apuestas_pasadas_fibonacci[1] = self.__apuestas_pasadas_fibonacci[0]
         self.__apuestas_pasadas_fibonacci[0] = cantidad_apostada
@@ -64,9 +61,7 @@ class Estrategia:
 
         return proxima_apuesta
 
-
-
-    def __dalambert(self, gano_apuesta:bool, cantidad_apostada: int) -> int:
+    def __dalambert(self, gano_apuesta: bool, cantidad_apostada: int) -> int:
 
         if not gano_apuesta:
             proxima_apuesta = cantidad_apostada + self.unidad_dalambert
@@ -74,9 +69,15 @@ class Estrategia:
             proxima_apuesta = cantidad_apostada - self.unidad_dalambert
         return proxima_apuesta
 
-    def __paroli(self, gano_apuesta:bool, cantidad_apostada:int) -> int:
-        if self.__cantidad_victorias_paroli>= 3 or not gano_apuesta :
+    def __paroli(self, gano_apuesta: bool, cantidad_apostada: int) -> int:
+
+        if not gano_apuesta:
             proxima_apuesta = self.monto_apuesta_inicial
-        else:
+            self.__cantidad_victorias_paroli = 0
+        elif gano_apuesta and self.__cantidad_victorias_paroli <3:
             proxima_apuesta = cantidad_apostada*2
+            self.__cantidad_victorias_paroli +=1
+        elif gano_apuesta and self.__cantidad_victorias_paroli >=3:
+            proxima_apuesta = self.monto_apuesta_inicial
+            self.__cantidad_victorias_paroli += 1
         return proxima_apuesta

@@ -1,12 +1,12 @@
 from typing import List, Tuple
 
 import numpy as np
-
+import math
 from estrategia import Estrategia
 from ruleta import Ruleta
 import matplotlib.pyplot as plt
 
-INFINITO:int = 999999999999999999999999999999999999999999999999999999999999
+
 
 
 #Variables del sistema
@@ -19,9 +19,9 @@ apuesta_inicial:int = 10
 
 #caja_inicial: Si el capital es infinito, no se le da pelota
 caja_inicial:int = 200
-cantidad_corridas:int = 10
+cantidad_corridas:int = 50
 cantidad_tiradas:int = 200
-apuesta_maxima:int = INFINITO*apuesta_inicial
+apuesta_maxima:int = 50*apuesta_inicial
 
 #Darle bola solo si usas dalambert
 unidad_dalambert:int = 2
@@ -44,7 +44,7 @@ for i in range(cantidad_corridas):
     ruleta: Ruleta = Ruleta(apuesta_maxima=apuesta_maxima,
                             valor_apostado='par')
     estrategia = Estrategia(apuesta_inicial=apuesta_inicial,
-                            estrategia='paroli',
+                            estrategia='martingala',
                             unidad_dalambert=unidad_dalambert)
     apuesta_actual: int = apuesta_inicial
     acumulador_apuestas = apuesta_actual
@@ -56,27 +56,32 @@ for i in range(cantidad_corridas):
     historico_promedios_numeros : List[float] = []
 
     for j in range(cantidad_tiradas):
+        print(f"TIRADA {j + 1}")
+        print(f"{apuesta_actual=} -- {caja_actual=}")
         if (tipo_capital == "finito" and caja_actual - apuesta_actual < 0):
-
             break
         ganancia:int = 0
-        try:
-            ganancia = ruleta.apostar(apuesta_actual)
-        except ValueError:
-            break
+
+        #Revisar apuesta maxima
+        if apuesta_actual > apuesta_maxima and apuesta_maxima!= 0:
+            apuesta_actual =  apuesta_maxima
+
+        ganancia = ruleta.apostar(apuesta_actual)
+
 
         gano_apuesta:bool = ganancia > 0
-        apuesta_actual = estrategia.get_proxima_apuesta(gano_apuesta, apuesta_actual)
+
+
 
         #Nota: ganancia puede ser negativo
         caja_actual += ganancia
         acumulador_apuestas += apuesta_actual
         acumulador_ganacias += ganancia
 
-        print(f"CORRIDA {j}")
-        print(f"{apuesta_actual=} -- {caja_actual=}")
         historico_caja.append(caja_actual)
         historico_apuesta.append(apuesta_actual)
+
+        apuesta_actual = estrategia.get_proxima_apuesta(gano_apuesta, apuesta_actual)
 
 
     historicos_caja.append(historico_caja)
@@ -92,6 +97,7 @@ plt.show()
 
 for apuestas in historicos_apuesta:
     plt.plot(apuestas)
+plt.axhline(apuesta_maxima,label = "Apuesta maxima")
 plt.title("Historicos de apuesta")
 plt.show()
 

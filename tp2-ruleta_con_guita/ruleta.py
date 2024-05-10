@@ -15,7 +15,7 @@ class Ruleta:
     __forma_apuesta_elegida: Callable
 
 
-    def __init__(self, valor_apostado: str | int, apuesta_maxima:int):
+    def __init__(self, valor_apostado: str | int, apuesta_maxima:int = 0):
 
         self.set_forma_apuesta(valor_apostado)
         self.set_apuesta_maxima(apuesta_maxima)
@@ -29,7 +29,7 @@ class Ruleta:
     def set_apuesta_maxima(self,apuesta_maxima:int ):
         if not isinstance(apuesta_maxima,int ):
             raise TypeError("No se ingreso una apuesta maxima entera")
-        if apuesta_maxima <=0:
+        if apuesta_maxima <0:
             raise ValueError("Ingrese una apuesta maxima valida")
         self.__apuesta_maxima = apuesta_maxima
     def set_forma_apuesta(self, valor_apostado: str| int):
@@ -49,9 +49,10 @@ class Ruleta:
 
 
     def apostar(self, cantidad_apostada:int):
-        if cantidad_apostada > self.__apuesta_maxima:
+        if cantidad_apostada > self.__apuesta_maxima and self.__apuesta_maxima != 0:
             raise ValueError("La cantidad apostada supero el maximo")
         numero_ruleta: int = randint(0, 36)
+
         self.numeros_salidos[numero_ruleta] += 1
         self.contador_tiradas += 1
         avg = self.promedio_numeros()
@@ -82,7 +83,7 @@ class Ruleta:
         el numero de veces que se gana la cantidad apostada"""
 
         def apostar(numero_ruleta:int) -> int:
-             return 36 if numero_elegido == numero_ruleta else 0
+             return 35 if numero_elegido == numero_ruleta else 0
 
         return apostar
 
@@ -93,7 +94,7 @@ class Ruleta:
         def apostar(numero_ruleta:int) -> int:
             if (color_elegido == "rojo" and numero_ruleta in self.numeros_rojos) or (
                     color_elegido == "negro" and numero_ruleta in self.numeros_negros):
-                return 2
+                return 1
             else:
 
                 return 0
@@ -109,7 +110,7 @@ class Ruleta:
                 return num % 2 == 0
             if (paridad_elegida == "impar" and not es_par(numero_ruleta)) or (
                     paridad_elegida == "par" and es_par(numero_ruleta) and numero_ruleta != 0):
-                return 2
+                return 1
             else:
                 return 0
 
