@@ -14,13 +14,15 @@ class Estrategia:
 
     #Atributos privados
     __apuestas_pasadas_fibonacci: List[int]
+    __cantidad_victorias_paroli:int
 
-    def __init__(self, apuesta_inicial: int, estrategia: str, ruleta, unidad_dalambert: int = 0):
+
+    def __init__(self, apuesta_inicial: int, estrategia: str, unidad_dalambert: int = 0):
         if not isinstance(apuesta_inicial, int):
             raise TypeError("La apuesta inicial debe ser un entero")
         if not EstrategiasEnum.has_value(estrategia):
             raise ValueError(
-                f"La estrategia debe ser alguno de los siguientes valores {EstrategiasEnum.show_values()}")
+                f"La estrategia debe ser alguno de los siguientes valores {EstrategiasEnum.get_values()}")
         if apuesta_inicial <= 0:
             raise ValueError("No se pueden realizar apuestas iniciales iguales a 0 o menor")
         if not isinstance(unidad_dalambert, int):
@@ -28,16 +30,22 @@ class Estrategia:
 
         self.monto_apuesta_inicial = apuesta_inicial
         self.unidad_dalambert = unidad_dalambert
+        self.__cantidad_victorias_paroli = 0
+
         if estrategia == "dalambert":
-            self.get_proxima_apuesta = self.__apostar_dalambert
+            self.get_proxima_apuesta = self.__dalambert
         elif estrategia == "fibonacci":
-            self.get_proxima_apuesta = self.__apostar_fibonacci
+            self.get_proxima_apuesta = self.__fibonacci
         elif estrategia == "martingala":
-            self.get_proxima_apuesta = self.__apostar_martingala
+            self.get_proxima_apuesta = self.__martingala
+        elif estrategia == 'paroli':
+            self.get_proxima_apuesta = self.__paroli
+
+
         self.__apuestas_pasadas_fibonacci = [0, 0, 0]
         print(f"ESTRATEGIA: estas usando '{estrategia}'")
 
-    def __apostar_martingala(self, gano_apuesta: bool, cantidad_apostada: int) -> int:
+    def __martingala(self, gano_apuesta: bool, cantidad_apostada: int) -> int:
         if not gano_apuesta:
             proxima_apuesta = cantidad_apostada * 2
         else:
@@ -45,7 +53,7 @@ class Estrategia:
         return proxima_apuesta
 
 
-    def __apostar_fibonacci(self, gano_apuesta:bool, cantidad_apostada: int) -> int:
+    def __fibonacci(self, gano_apuesta:bool, cantidad_apostada: int) -> int:
         self.__apuestas_pasadas_fibonacci[2] = self.__apuestas_pasadas_fibonacci[1]
         self.__apuestas_pasadas_fibonacci[1] = self.__apuestas_pasadas_fibonacci[0]
         self.__apuestas_pasadas_fibonacci[0] = cantidad_apostada
@@ -58,10 +66,17 @@ class Estrategia:
 
 
 
-    def __apostar_dalambert(self, gano_apuesta:bool, cantidad_apostada: int) -> int:
+    def __dalambert(self, gano_apuesta:bool, cantidad_apostada: int) -> int:
 
         if not gano_apuesta:
             proxima_apuesta = cantidad_apostada + self.unidad_dalambert
         else:
             proxima_apuesta = cantidad_apostada - self.unidad_dalambert
+        return proxima_apuesta
+
+    def __paroli(self, gano_apuesta:bool, cantidad_apostada:int) -> int:
+        if self.__cantidad_victorias_paroli>= 3 or not gano_apuesta :
+            proxima_apuesta = self.monto_apuesta_inicial
+        else:
+            proxima_apuesta = cantidad_apostada*2
         return proxima_apuesta

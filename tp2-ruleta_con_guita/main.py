@@ -5,17 +5,23 @@ import numpy as np
 from estrategia import Estrategia
 from ruleta import Ruleta
 import matplotlib.pyplot as plt
+
+INFINITO:int = 999999999999999999999999999999999999999999999999999999999999
+
+
 #Variables del sistema
 
-#Puede ser finito o inifinito
-tipo_capital:str = 'finito'
+#TIPO_CAPITAL: Puede ser 'finito' o 'inifinito'
+tipo_capital:str = 'infinito'
 
-#Si el capital es infinito, no se le da pelota
+
 apuesta_inicial:int = 10
+
+#caja_inicial: Si el capital es infinito, no se le da pelota
 caja_inicial:int = 200
 cantidad_corridas:int = 10
-cantidad_tiradas:int = 2000
-apuesta_maxima:int = 50*apuesta_inicial
+cantidad_tiradas:int = 200
+apuesta_maxima:int = INFINITO*apuesta_inicial
 
 #Darle bola solo si usas dalambert
 unidad_dalambert:int = 2
@@ -38,8 +44,7 @@ for i in range(cantidad_corridas):
     ruleta: Ruleta = Ruleta(apuesta_maxima=apuesta_maxima,
                             valor_apostado='par')
     estrategia = Estrategia(apuesta_inicial=apuesta_inicial,
-                            estrategia='fibonacci',
-                            ruleta=ruleta,
+                            estrategia='paroli',
                             unidad_dalambert=unidad_dalambert)
     apuesta_actual: int = apuesta_inicial
     acumulador_apuestas = apuesta_actual

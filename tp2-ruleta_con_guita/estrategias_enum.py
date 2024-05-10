@@ -4,16 +4,16 @@ class EstrategiasEnum(Enum):
     MARTINGALA = 1
     DALAMBERT = 2
     FIBONACCI = 3
+    PAROLI = 4
 
     @classmethod
     def has_value(cls, value:str):
         if not isinstance(value, str):
             return False
         value_upper:str = value.upper()
-
         return (value_upper in EstrategiasEnum._member_names_)
 
     @classmethod
-    def show_values(cls):
+    def get_values(cls):
         return EstrategiasEnum._member_names_
 
