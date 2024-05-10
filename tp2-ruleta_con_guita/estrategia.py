@@ -5,16 +5,12 @@ from estrategias_enum import EstrategiasEnum
 
 @dataclass
 class Estrategia:
-
-
     #Atributos publicos
     monto_apuesta_inicial: int
     unidad_dalambert: int
 
     #Apostar es un metodo que se asigna al saber que estrategia se va a usar(en el metodo init)
-    ruleta = None
-    apostar: Callable
-
+    get_proxima_apuesta: Callable[[bool,int], int]
 
     #Atributos privados
     __apuestas_pasadas_fibonacci: List[int]
@@ -33,60 +29,39 @@ class Estrategia:
         self.monto_apuesta_inicial = apuesta_inicial
         self.unidad_dalambert = unidad_dalambert
         if estrategia == "dalambert":
-            self.apostar = self.__apostar_dalambert
+            self.get_proxima_apuesta = self.__apostar_dalambert
         elif estrategia == "fibonacci":
-            self.apostar = self.__apostar_fibonacci
+            self.get_proxima_apuesta = self.__apostar_fibonacci
         elif estrategia == "martingala":
-            self.apostar = self.__apostar_martingala
-        self.ruleta = ruleta
+            self.get_proxima_apuesta = self.__apostar_martingala
         self.__apuestas_pasadas_fibonacci = [0, 0, 0]
-        print(f"ESTRATEGIA: estas usando {estrategia}")
+        print(f"ESTRATEGIA: estas usando '{estrategia}'")
 
-    def __apostar_martingala(self, cantidad_apostada: int) -> Tuple[int, int]:
-
-        multiplicador_ganancia: int = self.ruleta.apostar()
-
-        ganancia: int = 0
-
-        proxima_apuesta: int = 0
-        if not multiplicador_ganancia:
+    def __apostar_martingala(self, gano_apuesta: bool, cantidad_apostada: int) -> int:
+        if not gano_apuesta:
             proxima_apuesta = cantidad_apostada * 2
-            ganancia = -cantidad_apostada
         else:
             proxima_apuesta = self.monto_apuesta_inicial
-            ganancia = cantidad_apostada * multiplicador_ganancia
-        return proxima_apuesta, ganancia
+        return proxima_apuesta
 
-    def __apostar_fibonacci(self, cantidad_apostada: int) -> Tuple[int, int]:
 
-        multiplicador_ganancia: int = self.ruleta.apostar()
-
-        ganancia: int = 0
-
-        proxima_apuesta: int = 0
-
+    def __apostar_fibonacci(self, gano_apuesta:bool, cantidad_apostada: int) -> int:
         self.__apuestas_pasadas_fibonacci[2] = self.__apuestas_pasadas_fibonacci[1]
         self.__apuestas_pasadas_fibonacci[1] = self.__apuestas_pasadas_fibonacci[0]
         self.__apuestas_pasadas_fibonacci[0] = cantidad_apostada
-        if not multiplicador_ganancia:
+        if not gano_apuesta:
             proxima_apuesta = self.__apuestas_pasadas_fibonacci[0] + self.__apuestas_pasadas_fibonacci[1]
-            ganancia = -cantidad_apostada
         else:
             proxima_apuesta = max(self.__apuestas_pasadas_fibonacci[2], self.monto_apuesta_inicial)
-            ganancia = cantidad_apostada * multiplicador_ganancia
-        return proxima_apuesta, ganancia
 
-    def __apostar_dalambert(self, cantidad_apostada: int) -> Tuple[int, int]:
-        global unidad_dalambert
-        multiplicador_ganancia: int = self.ruleta.apostar()
+        return proxima_apuesta
 
-        ganancia: int = 0
 
-        proxima_apuesta: int = 0
-        if not multiplicador_ganancia:
+
+    def __apostar_dalambert(self, gano_apuesta:bool, cantidad_apostada: int) -> int:
+
+        if not gano_apuesta:
             proxima_apuesta = cantidad_apostada + self.unidad_dalambert
-            ganancia = -cantidad_apostada
         else:
             proxima_apuesta = cantidad_apostada - self.unidad_dalambert
-            ganancia = cantidad_apostada * multiplicador_ganancia
-        return proxima_apuesta, ganancia
+        return proxima_apuesta
