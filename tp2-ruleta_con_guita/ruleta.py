@@ -11,7 +11,7 @@ class Ruleta:
     contador_tiradas:int
     historico_promedios:List[int]
 
-    __apuesta_maxima:int
+    apuesta_maxima:int
     __forma_apuesta_elegida: Callable
 
 
@@ -31,7 +31,7 @@ class Ruleta:
             raise TypeError("No se ingreso una apuesta maxima entera")
         if apuesta_maxima <0:
             raise ValueError("Ingrese una apuesta maxima valida")
-        self.__apuesta_maxima = apuesta_maxima
+        self.apuesta_maxima = apuesta_maxima
     def set_forma_apuesta(self, valor_apostado: str| int):
         if not (isinstance(valor_apostado, int) or isinstance(valor_apostado, str)):
             raise TypeError("La apuesta debe ser un entero o una string")
@@ -49,7 +49,7 @@ class Ruleta:
 
 
     def apostar(self, cantidad_apostada:int):
-        if cantidad_apostada > self.__apuesta_maxima and self.__apuesta_maxima != 0:
+        if cantidad_apostada > self.apuesta_maxima and self.apuesta_maxima != 0:
             raise ValueError("La cantidad apostada supero el maximo")
         numero_ruleta: int = randint(0, 36)
 

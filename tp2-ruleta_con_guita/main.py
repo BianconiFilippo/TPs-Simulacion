@@ -13,15 +13,17 @@ import matplotlib.pyplot as plt
 
 #TIPO_CAPITAL: Puede ser 'finito' o 'inifinito'
 tipo_capital:str = 'infinito'
-
+estrategia_apuesta:str = 'martingala'
+valor_apostado:str = 'par'
 
 apuesta_inicial:int = 10
 
 #caja_inicial: Si el capital es infinito, no se le da pelota
-caja_inicial:int = 200
+caja_inicial:int = 0 if tipo_capital == 'infinito' else 500
 cantidad_corridas:int = 50
-cantidad_tiradas:int = 200
-apuesta_maxima:int = 50*apuesta_inicial
+cantidad_tiradas:int = 2000
+#Si apuesta maxima es 0, no existe
+apuesta_maxima:int = 0
 
 #Darle bola solo si usas dalambert
 unidad_dalambert:int = 2
@@ -37,23 +39,34 @@ unidad_dalambert:int = 2
 historicos_caja:List[List[int]] = []
 historicos_promedio:List[List[float]]=[]
 historicos_apuesta:List[List[float]]=[]
+
+cantidad_con_profit:int = 0
+
+
+ultimas_cajas:List[int] = []
+promedios_ultimas_cajas:List[float] = []
+
 for i in range(cantidad_corridas):
 
     #Reseteamos las variables
     # Aca se puede poner un valor del 0 al 36 o bien 'par', 'impar', 'rojo' o 'negro'
     ruleta: Ruleta = Ruleta(apuesta_maxima=apuesta_maxima,
-                            valor_apostado='par')
+                            valor_apostado=valor_apostado)
     estrategia = Estrategia(apuesta_inicial=apuesta_inicial,
-                            estrategia='martingala',
+                            estrategia=estrategia_apuesta,
                             unidad_dalambert=unidad_dalambert)
     apuesta_actual: int = apuesta_inicial
     acumulador_apuestas = apuesta_actual
     caja_actual: int = caja_inicial
     historico_caja: List[int] = [caja_actual]
+
+
     acumulador_ganacias: int = 0
     ganancia: int = 0
     historico_apuesta:List[int] = [apuesta_actual]
     historico_promedios_numeros : List[float] = []
+
+
 
     for j in range(cantidad_tiradas):
         print(f"TIRADA {j + 1}")
@@ -63,8 +76,8 @@ for i in range(cantidad_corridas):
         ganancia:int = 0
 
         #Revisar apuesta maxima
-        if apuesta_actual > apuesta_maxima and apuesta_maxima!= 0:
-            apuesta_actual =  apuesta_maxima
+        if apuesta_actual > ruleta.apuesta_maxima and ruleta.apuesta_maxima!= 0:
+            apuesta_actual =  ruleta.apuesta_maxima
 
         ganancia = ruleta.apostar(apuesta_actual)
 
@@ -83,10 +96,20 @@ for i in range(cantidad_corridas):
 
         apuesta_actual = estrategia.get_proxima_apuesta(gano_apuesta, apuesta_actual)
 
+    if caja_actual > caja_inicial:
+        cantidad_con_profit += 1
+
+    ultimas_cajas.append(caja_actual)
+    promedio_ultimas_cajas = sum(ultimas_cajas) / len(ultimas_cajas)
+    promedios_ultimas_cajas.append(promedio_ultimas_cajas)
 
     historicos_caja.append(historico_caja)
     historicos_apuesta.append(historico_apuesta)
     historicos_promedio.append(ruleta.historico_promedios)
+
+
+
+
 
 for caja in historicos_caja:
     plt.plot(caja)
@@ -94,6 +117,20 @@ plt.axhline(caja_inicial,label = "Caja inicial")
 plt.title("Flujo de caja ")
 plt.show()
 
+cantidad_sin_profit = cantidad_corridas - cantidad_con_profit
+print(f'{cantidad_corridas=}; f{cantidad_con_profit=}')
+plt.pie([cantidad_sin_profit, cantidad_con_profit],
+        labels = ['Sin profit', 'Con profit'],
+        autopct="%0.1f %%",
+        colors = ['#ff5530', '#78ff30'])
+plt.title("Cantidad de corridas que terminaron con caja positiva")
+plt.show()
+
+
+plt.plot(promedios_ultimas_cajas)
+plt.title("Evolucion del valor promedio de ultimo valor en caja en sucesivas corridas")
+plt.axhline(caja_inicial,label = "Caja inicial", color = '#ff5530')
+plt.show()
 
 for apuestas in historicos_apuesta:
     plt.plot(apuestas)
