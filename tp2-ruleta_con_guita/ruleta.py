@@ -10,6 +10,8 @@ class Ruleta:
     numeros_salidos:List
     contador_tiradas:int
     historico_promedios:List[int]
+    #Historico resultados es un array dentro del cual se guarda True si se gano o False si se perdio
+    historico_resultados:List[bool]
 
     apuesta_maxima:int
     __forma_apuesta_elegida: Callable
@@ -21,6 +23,7 @@ class Ruleta:
         self.set_apuesta_maxima(apuesta_maxima)
         self.numeros_salidos = [0 for i in range(0,37)]
         self.historico_promedios = []
+        self.historico_resultados =[]
         self.contador_tiradas = 0
         self.numeros_rojos = {1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36}
         self.numeros_negros = {2, 4, 6, 8, 10, 11, 13, 15, 17, 20, 22, 24, 26, 28, 29, 31, 33, 35}
@@ -63,8 +66,10 @@ class Ruleta:
 
         resultado:int
         if multiplicador_ganancia == 0:
+            self.historico_resultados.append(False)
             resultado = -cantidad_apostada
         else:
+            self.historico_resultados.append(True)
             resultado = cantidad_apostada*multiplicador_ganancia
         return resultado
 

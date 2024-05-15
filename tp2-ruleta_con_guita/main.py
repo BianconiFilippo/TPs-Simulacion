@@ -12,8 +12,8 @@ import matplotlib.pyplot as plt
 #Variables del sistema
 
 #TIPO_CAPITAL: Puede ser 'finito' o 'inifinito'
-tipo_capital:str = 'infinito'
-estrategia_apuesta:str = 'martingala'
+tipo_capital:str = 'finito'
+estrategia_apuesta:str = 'fibonacci'
 valor_apostado:str = 'par'
 
 apuesta_inicial:int = 10
@@ -27,7 +27,6 @@ apuesta_maxima:int = 0
 
 #Darle bola solo si usas dalambert
 unidad_dalambert:int = 2
-
 
 
 
@@ -94,10 +93,13 @@ for i in range(cantidad_corridas):
         historico_caja.append(caja_actual)
         historico_apuesta.append(apuesta_actual)
 
+
         apuesta_actual = estrategia.get_proxima_apuesta(gano_apuesta, apuesta_actual)
+
 
     if caja_actual > caja_inicial:
         cantidad_con_profit += 1
+
 
     ultimas_cajas.append(caja_actual)
     promedio_ultimas_cajas = sum(ultimas_cajas) / len(ultimas_cajas)
@@ -108,12 +110,10 @@ for i in range(cantidad_corridas):
     historicos_promedio.append(ruleta.historico_promedios)
 
 
-
-
-
+print(historico_caja)
 for caja in historicos_caja:
-    plt.plot(caja)
-plt.axhline(caja_inicial,label = "Caja inicial")
+    plt.plot( caja)
+plt.axhline(caja_inicial,label = "Caja inicial", color="r")
 plt.title("Flujo de caja ")
 plt.show()
 

@@ -55,7 +55,8 @@ class Estrategia:
         self.__apuestas_pasadas_fibonacci[1] = self.__apuestas_pasadas_fibonacci[0]
         self.__apuestas_pasadas_fibonacci[0] = cantidad_apostada
         if not gano_apuesta:
-            proxima_apuesta = self.__apuestas_pasadas_fibonacci[0] + self.__apuestas_pasadas_fibonacci[1]
+            suma_anteriores = self.__apuestas_pasadas_fibonacci[0] + self.__apuestas_pasadas_fibonacci[1]
+            proxima_apuesta = max(suma_anteriores, self.monto_apuesta_inicial)
         else:
             proxima_apuesta = max(self.__apuestas_pasadas_fibonacci[2], self.monto_apuesta_inicial)
 
@@ -70,14 +71,15 @@ class Estrategia:
         return proxima_apuesta
 
     def __paroli(self, gano_apuesta: bool, cantidad_apostada: int) -> int:
-
+        print(self.__cantidad_victorias_paroli)
         if not gano_apuesta:
             proxima_apuesta = self.monto_apuesta_inicial
             self.__cantidad_victorias_paroli = 0
-        elif gano_apuesta and self.__cantidad_victorias_paroli <3:
+        #Se pone como valor maximo el 0 porque se empieza contando del 0
+        elif gano_apuesta and self.__cantidad_victorias_paroli <2:
             proxima_apuesta = cantidad_apostada*2
             self.__cantidad_victorias_paroli +=1
-        elif gano_apuesta and self.__cantidad_victorias_paroli >=3:
+        elif gano_apuesta and self.__cantidad_victorias_paroli >=2:
             proxima_apuesta = self.monto_apuesta_inicial
             self.__cantidad_victorias_paroli += 1
         return proxima_apuesta
